@@ -1,0 +1,10 @@
+{
+  "name": "gmail-toast-extension",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Gmail の新着をページ内トーストで通知する Chrome 拡張機能",
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  }
+}
