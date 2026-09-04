@@ -34,10 +34,7 @@ async function init() {
     }
   }
 
-  document.getElementById('test').addEventListener('click', async () => {
-    const res = await send({ type: 'TEST_TOAST' });
-    flash(res.ok ? 'テスト表示を出しました' : (res.reason || 'テスト表示を出せませんでした'));
-  });
+  document.getElementById('test').addEventListener('click', showTestToast);
 
   document.getElementById('check').addEventListener('click', async () => {
     flash('確認中…', 0);
@@ -102,6 +99,26 @@ async function save() {
   fill(settings); // 範囲外の値が丸められた結果を画面に反映する
   await send({ type: 'SETTINGS_CHANGED' });
   flash('保存しました');
+}
+
+// テスト表示はこの設定ページ自身に描画する。実際の新着トーストは
+// 見ているウェブページに出るが、設定ページは chrome-extension:// のため
+// スクリプトを注入できず、押しても何も出ないように見えてしまう。
+function showTestToast() {
+  const item = {
+    id: 'test',
+    subject: 'テスト表示：件名はこのように出ます',
+    sender: settings.showSender ? 'Gmail 新着トースト' : '',
+    snippet: settings.showSnippet ? 'これは設定確認用のテスト表示です。実際の新着では本文の冒頭が入ります。' : '',
+    account: settings.showAccount === 'always' ? 'you@example.com' : '',
+    link: null // クリックしても Gmail は開かない
+  };
+  window.__gmailAtomToast.show([item], {
+    position: settings.position,
+    durationMs: settings.durationSec * 1000,
+    maxToasts: settings.maxToasts,
+    sound: settings.sound
+  });
 }
 
 let flashTimer = null;

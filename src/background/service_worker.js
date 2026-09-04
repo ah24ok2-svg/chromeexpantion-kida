@@ -60,14 +60,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       openMail(msg.link, msg.id).then(() => sendResponse({ ok: true }));
       return true;
 
-    case 'TEST_TOAST':
-      (async () => {
-        const settings = await getSettings();
-        const shown = await showToasts([demoEntry()], settings);
-        sendResponse({ ok: shown, reason: shown ? '' : 'トーストを出せるタブがありません（通常のウェブページを開いてから試してください）。' });
-      })();
-      return true;
-
     case 'MARK_ALL_SEEN':
       markAllSeen().then(() => sendResponse({ ok: true }));
       return true;
@@ -233,19 +225,6 @@ async function pickTargetTab(settings) {
     return tab;
   }
   return null;
-}
-
-function demoEntry() {
-  return {
-    id: 'demo',
-    subject: 'テスト通知：件名はこのように表示されます',
-    senderName: 'Gmail 新着トースト',
-    senderEmail: '',
-    snippet: 'これは設定確認用のテスト表示です。実際の新着メールでは本文の冒頭が入ります。',
-    account: 0,
-    address: '',
-    link: 'https://mail.google.com/mail/u/0/'
-  };
 }
 
 // ---------------------------------------------------------------- 状態の保存

@@ -254,11 +254,15 @@
       toast.__fallbackTimer = setTimeout(() => dismiss(toast), duration + 1500);
     }
 
+    // link の無い項目（設定画面のテスト表示）は閉じるだけにする
+    if (!item.link) toast.style.cursor = 'default';
     toast.addEventListener('click', () => {
-      try {
-        chrome.runtime.sendMessage({ type: 'OPEN_MAIL', link: item.link, id: item.id });
-      } catch {
-        /* 拡張機能が更新された直後などは無視してよい */
+      if (item.link) {
+        try {
+          chrome.runtime.sendMessage({ type: 'OPEN_MAIL', link: item.link, id: item.id });
+        } catch {
+          /* 拡張機能が更新された直後などは無視してよい */
+        }
       }
       dismiss(toast);
     });

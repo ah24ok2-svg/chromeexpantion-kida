@@ -5,6 +5,7 @@
   "description": "Gmail の新着をページ内トーストで通知する Chrome 拡張機能",
   "type": "module",
   "scripts": {
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "test:e2e": "node test/e2e.mjs"
   }
 }
