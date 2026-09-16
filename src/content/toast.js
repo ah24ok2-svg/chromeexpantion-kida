@@ -44,7 +44,7 @@
       display: grid;
       grid-template-columns: 22px 1fr;
       gap: 10px;
-      padding: 11px 12px 12px;
+      padding: 11px 44px 12px 12px;
       border-radius: 12px;
       border: 1px solid rgba(0, 0, 0, 0.08);
       background: #ffffff;
@@ -109,22 +109,25 @@
       text-overflow: ellipsis;
     }
 
+    /* 閉じるボタンは常に見えていないと狙えないので、透明にはしない */
     .close {
       position: absolute;
-      top: 4px; right: 4px;
-      width: 20px; height: 20px;
+      top: 7px; right: 7px;
+      width: 30px; height: 30px;
       border: 0; padding: 0; margin: 0;
       border-radius: 50%;
-      background: transparent;
-      color: #80868b;
-      font: 600 14px/1 system-ui, sans-serif;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0, 0, 0, 0.06);
+      color: #5f6368;
       cursor: pointer;
-      opacity: 0;
-      transition: opacity 120ms ease, background 120ms ease;
+      transition: background 120ms ease, color 120ms ease, transform 100ms ease;
     }
-    .toast:hover .close { opacity: 1; }
-    .close:hover { background: rgba(0, 0, 0, 0.08); color: #202124; }
-    .close:focus-visible { opacity: 1; outline: 2px solid #1a73e8; outline-offset: 1px; }
+    .close svg { width: 15px; height: 15px; display: block; }
+    /* 見た目より一回り広い当たり判定 */
+    .close::after { content: ""; position: absolute; inset: -5px; border-radius: 50%; }
+    .close:hover { background: rgba(0, 0, 0, 0.13); color: #202124; }
+    .close:active { transform: scale(0.92); }
+    .close:focus-visible { outline: 2px solid #1a73e8; outline-offset: 2px; }
 
     .progress {
       position: absolute;
@@ -148,13 +151,17 @@
       }
       .meta, .snippet { color: #9aa0a6; }
       .account { color: #80868b; }
-      .close:hover { background: rgba(255, 255, 255, 0.12); color: #e8eaed; }
+      .close { background: rgba(255, 255, 255, 0.1); color: #9aa0a6; }
+      .close:hover { background: rgba(255, 255, 255, 0.2); color: #e8eaed; }
     }
     @media (prefers-reduced-motion: reduce) {
       .toast { transition: none; }
       .progress.run { animation: none; }
     }
   `;
+
+  const CLOSE_MARK = `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
+      stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>`;
 
   const ENVELOPE = `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#fff"
       stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -234,7 +241,7 @@
     const close = document.createElement('button');
     close.className = 'close';
     close.type = 'button';
-    close.textContent = '×';
+    close.innerHTML = CLOSE_MARK;
     close.setAttribute('aria-label', '閉じる');
     close.addEventListener('click', (e) => {
       e.stopPropagation();

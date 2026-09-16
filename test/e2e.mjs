@@ -70,6 +70,29 @@ try {
   assert.equal(testToast.right, 16);
   assert.deepEqual(optionErrors, [], '設定画面でエラーが出ないこと');
 
+  // 閉じるボタン: ホバーしなくても見えていて、十分な大きさで、クリックで閉じられること
+  const closeBtn = await options.evaluate(() => {
+    const button = document.getElementById('__gmail-atom-toast-host').shadowRoot.querySelector('.close');
+    const rect = button.getBoundingClientRect();
+    return {
+      width: rect.width,
+      height: rect.height,
+      opacity: getComputedStyle(button).opacity,
+      x: rect.x + rect.width / 2,
+      y: rect.y + rect.height / 2
+    };
+  });
+  assert.ok(closeBtn.width >= 28 && closeBtn.height >= 28,
+    `閉じるボタンが十分な大きさであること（実際: ${closeBtn.width}x${closeBtn.height}）`);
+  assert.equal(closeBtn.opacity, '1', 'ホバーしなくても閉じるボタンが見えていること');
+  await options.mouse.click(closeBtn.x, closeBtn.y);
+  await options.waitForTimeout(400);
+  const remaining = await options.evaluate(() => {
+    const host = document.getElementById('__gmail-atom-toast-host');
+    return host ? host.shadowRoot.querySelectorAll('.toast').length : 0;
+  });
+  assert.equal(remaining, 0, '閉じるボタンでトーストが消えること');
+
   // --- 新着の通知フロー（フィードの取得だけ差し替える）
   await sw.evaluate(() => {
     const entry = (id, subject) => `<entry><title>${subject}</title><summary>本文の冒頭です。</summary>` +
